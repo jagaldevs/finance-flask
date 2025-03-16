@@ -1,7 +1,5 @@
 venv/
 __pycache__/
 *.pyc
-instance/
+*.db
 .env
-.flask_env
-.DS_Store
