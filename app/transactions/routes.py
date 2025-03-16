@@ -147,7 +147,7 @@ def delete(id):
     flash('Transaction deleted successfully.', 'success')
     return redirect(url_for('transactions.list'))
 
-@transaction_bp.route('/categories', methods=['GET'])
+@transaction_bp.route('/categories', methods=['GET', 'POST'])
 @login_required
 def categories():
     """List and manage categories."""

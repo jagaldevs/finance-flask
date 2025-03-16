@@ -101,8 +101,8 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div id="expenses-chart" class="chart-container">
-                            <!-- Radar chart will be inserted here -->
+                        <div class="chart-container">
+                            <canvas id="expenses-chart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -123,8 +123,8 @@
                                 <span class="currency">$</span><span id="total-income">2490</span>
                             </div>
                         </div>
-                        <div id="income-expense-chart" class="chart-container">
-                            <!-- Line chart will be inserted here -->
+                        <div class="chart-container">
+                            <canvas id="income-expense-chart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div class="category-name">${category.name}</div>
                 </div>
-                <div class="category-amount">${category.amount}</div>
+                <div class="category-amount">$${category.amount}</div>
                 <div class="category-arrow"><i class="fas fa-chevron-right"></i></div>
             `;
             categoriesContainer.appendChild(categoryItem);
