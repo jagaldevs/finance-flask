@@ -1,0 +1,315 @@
+:root {
+    --primary: #E91E63;
+    --secondary: #6f42c1;
+    --dark-bg: #1e213a;
+    --card-bg: #282a43;
+    --text-light: #f8f9fa;
+    --text-muted: #b1b5c3;
+    --green: #2cd9c5;
+    --red: #ff4560;
+  }
+  
+  body {
+    background-color: var(--dark-bg);
+    color: var(--text-light);
+    font-family: 'Inter', sans-serif;
+  }
+  
+  /* Navbar Styles */
+  .navbar {
+    background-color: var(--dark-bg);
+    padding: 1rem 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  .navbar-brand {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 1.5rem;
+  }
+  
+  .navbar .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .navbar-dark .navbar-nav .nav-link {
+    color: var(--text-light);
+  }
+  
+  /* Dashboard Styles */
+  .dashboard-container {
+    padding: 2rem;
+  }
+  
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .dashboard-header h1 {
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin: 0;
+  }
+  
+  .date-range-selector {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .date-range-selector .btn {
+    background-color: var(--card-bg);
+    color: var(--text-muted);
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .date-range-selector .btn.active {
+    background-color: var(--primary);
+    color: white;
+  }
+  
+  /* Card Styles */
+  .dashboard-card {
+    background-color: var(--card-bg);
+    border: none;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    height: 100%;
+  }
+  
+  .dashboard-card .card-header {
+    background-color: transparent;
+    border-bottom: none;
+    padding: 1.25rem;
+  }
+  
+  .dashboard-card .card-header h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-light);
+  }
+  
+  .dashboard-card .card-body {
+    padding: 1.25rem;
+  }
+  
+  /* Category List */
+  .category-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  .category-item:last-child {
+    border-bottom: none;
+  }
+  
+  .category-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .category-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+  
+  .category-name {
+    font-weight: 500;
+  }
+  
+  .category-amount {
+    font-weight: 600;
+  }
+  
+  .category-arrow {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+  }
+  
+  /* Expenses Container */
+  .expenses-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .today-expense, .week-expense {
+    text-align: center;
+  }
+  
+  .expenses-container h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  
+  .label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  
+  .percent {
+    display: inline-block;
+    padding: 0.125rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+  }
+  
+  .percent.positive {
+    background-color: rgba(0, 227, 150, 0.15);
+    color: var(--green);
+  }
+  
+  .percent.negative {
+    background-color: rgba(255, 69, 96, 0.15);
+    color: var(--red);
+  }
+  
+  /* Transaction list */
+  .transaction-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  .transaction-item:last-child {
+    border-bottom: none;
+  }
+  
+  .transaction-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-right: 1rem;
+  }
+  
+  .transaction-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .transaction-detail {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .transaction-name {
+    font-weight: 500;
+  }
+  
+  .transaction-category {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+  
+  /* Frequency container */
+  .frequency-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .daily-frequency, .weekly-frequency {
+    text-align: center;
+  }
+  
+  .frequency-container h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Chart container */
+  .chart-container {
+    height: 200px;
+    margin-top: 1rem;
+  }
+  
+  /* Totals container */
+  .totals-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  
+  .expenses-total {
+    color: var(--red);
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+  
+  .income-total {
+    color: var(--green);
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+  
+  .currency {
+    font-size: 1rem;
+    margin-right: 0.25rem;
+  }
+  
+  /* Add category button */
+  .add-category {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+  
+  .btn-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    font-size: 0.75rem;
+  }
+  
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .dashboard-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    
+    .expenses-container, .frequency-container, .totals-container {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    
+    .expenses-container h3, .frequency-container h3 {
+      font-size: 1.5rem;
+    }
+    
+    .chart-container {
+      height: 250px;
+    }
+  }

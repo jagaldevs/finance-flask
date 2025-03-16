@@ -1,0 +1,345 @@
+{% extends 'base.html' %}
+
+{% block title %}JagalDevs Finance Tracker{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>OVERVIEW</h1>
+        
+        <div class="date-range-selector">
+            <button id="last-week" class="btn {{ 'active' if range == 'week' else '' }}">Last week</button>
+            <button id="last-month" class="btn {{ 'active' if range == 'month' else '' }}">Last month</button>
+            <button id="custom-range" class="btn {{ 'active' if range == 'custom' else '' }}">Custom range</button>
+        </div>
+    </div>
+    
+    <div class="dashboard-content">
+        <div class="row">
+            <!-- Popular Categories -->
+            <div class="col-lg-4 mb-4">
+                <div class="card dashboard-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h2>Popular category</h2>
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    <div class="card-body">
+                        <div id="categories-list">
+                            <!-- Categories will be loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Total Expenses -->
+            <div class="col-lg-4 mb-4">
+                <div class="card dashboard-card">
+                    <div class="card-header">
+                        <h2>Total expenses</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="expenses-container">
+                            <div class="today-expense">
+                                <h3>$<span id="today-amount">0</span></h3>
+                                <div class="label">TODAY <span id="today-percent" class="percent">0%</span></div>
+                            </div>
+                            <div class="week-expense">
+                                <h3>$<span id="week-amount">0</span></h3>
+                                <div class="label">WEEK <span id="week-percent" class="percent">0%</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Popular Transactions -->
+            <div class="col-lg-4 mb-4">
+                <div class="card dashboard-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h2>Popular transactions</h2>
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                    <div class="card-body">
+                        <div id="popular-transactions">
+                            <!-- Popular transactions will be loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <!-- Transaction Frequency -->
+            <div class="col-lg-4 mb-4">
+                <div class="card dashboard-card">
+                    <div class="card-header">
+                        <h2>Frequency of transactions</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="frequency-container">
+                            <div class="daily-frequency">
+                                <h3 id="daily-frequency">0</h3>
+                                <div class="label">DAILY <span id="daily-percent" class="percent">0%</span></div>
+                            </div>
+                            <div class="weekly-frequency">
+                                <h3 id="weekly-frequency">0</h3>
+                                <div class="label">WEEKLY <span id="weekly-percent" class="percent">0%</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Expenses and Weekly Average -->
+            <div class="col-lg-4 mb-4">
+                <div class="card dashboard-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h2>Expenses and weekly average</h2>
+                        <div class="add-category">
+                            <span>Add category</span>
+                            <button class="btn btn-circle"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="expenses-chart" class="chart-container">
+                            <!-- Radar chart will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Expenses and Income -->
+            <div class="col-lg-4 mb-4">
+                <div class="card dashboard-card">
+                    <div class="card-header">
+                        <h2>Expenses and income <i class="fas fa-chevron-down"></i></h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="totals-container">
+                            <div class="expenses-total">
+                                <span class="currency">$</span><span id="total-expenses">1786</span>
+                            </div>
+                            <div class="income-total">
+                                <span class="currency">$</span><span id="total-income">2490</span>
+                            </div>
+                        </div>
+                        <div id="income-expense-chart" class="chart-container">
+                            <!-- Line chart will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load dashboard data
+    loadDashboardData('week');
+    
+    // Date range buttons
+    document.getElementById('last-week').addEventListener('click', function() {
+        setActiveButton(this);
+        loadDashboardData('week');
+    });
+    
+    document.getElementById('last-month').addEventListener('click', function() {
+        setActiveButton(this);
+        loadDashboardData('month');
+    });
+    
+    document.getElementById('custom-range').addEventListener('click', function() {
+        setActiveButton(this);
+        // Show date picker modal or functionality here
+    });
+    
+    function setActiveButton(button) {
+        document.querySelectorAll('.date-range-selector .btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        button.classList.add('active');
+    }
+    
+    function loadDashboardData(range) {
+        fetch(`/dashboard/data?range=${range}`)
+            .then(response => response.json())
+            .then(data => {
+                updateDashboardUI(data);
+                loadChartData(range);
+            })
+            .catch(error => console.error('Error loading dashboard data:', error));
+    }
+    
+    function updateDashboardUI(data) {
+        // Update expenses
+        document.getElementById('today-amount').textContent = data.today_expenses;
+        document.getElementById('week-amount').textContent = data.total_expenses;
+        document.getElementById('total-expenses').textContent = data.total_expenses;
+        document.getElementById('total-income').textContent = data.total_income;
+        
+        // Update transaction frequency
+        document.getElementById('daily-frequency').textContent = data.transaction_frequency.daily;
+        document.getElementById('weekly-frequency').textContent = data.transaction_frequency.weekly;
+        
+        // Update categories list
+        const categoriesContainer = document.getElementById('categories-list');
+        categoriesContainer.innerHTML = '';
+        
+        data.category_expenses.forEach(category => {
+            const categoryItem = document.createElement('div');
+            categoryItem.className = 'category-item';
+            categoryItem.innerHTML = `
+                <div class="category-info">
+                    <div class="category-icon" style="background-color: ${category.color}">
+                        <i class="fas fa-${category.icon || 'tag'}"></i>
+                    </div>
+                    <div class="category-name">${category.name}</div>
+                </div>
+                <div class="category-amount">${category.amount}</div>
+                <div class="category-arrow"><i class="fas fa-chevron-right"></i></div>
+            `;
+            categoriesContainer.appendChild(categoryItem);
+        });
+    }
+    
+    function loadChartData(range) {
+        // Load expenses and income chart data
+        fetch(`/dashboard/chart-data?range=${range}&type=expenses_income`)
+            .then(response => response.json())
+            .then(data => {
+                createExpensesIncomeChart(data);
+            })
+            .catch(error => console.error('Error loading chart data:', error));
+        
+        // Load category breakdown chart data
+        fetch(`/dashboard/chart-data?range=${range}&type=category_breakdown`)
+            .then(response => response.json())
+            .then(data => {
+                createCategoryChart(data);
+            })
+            .catch(error => console.error('Error loading category data:', error));
+    }
+    
+    function createExpensesIncomeChart(data) {
+        const ctx = document.getElementById('income-expense-chart').getContext('2d');
+        
+        // Destroy existing chart if it exists
+        if (window.incomeExpenseChart) {
+            window.incomeExpenseChart.destroy();
+        }
+        
+        // Prepare chart data
+        const labels = data.expenses.map(item => item.date);
+        const expensesData = data.expenses.map(item => item.amount);
+        const incomeData = data.income.map(item => item.amount);
+        
+        window.incomeExpenseChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Expenses',
+                        data: expensesData,
+                        borderColor: '#ff4560',
+                        backgroundColor: 'rgba(255, 69, 96, 0.2)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Income',
+                        data: incomeData,
+                        borderColor: '#00e396',
+                        backgroundColor: 'rgba(0, 227, 150, 0.2)',
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#999'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#999'
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    function createCategoryChart(data) {
+        const ctx = document.getElementById('expenses-chart').getContext('2d');
+        
+        // Destroy existing chart if it exists
+        if (window.categoryChart) {
+            window.categoryChart.destroy();
+        }
+        
+        // Prepare chart data
+        const labels = data.map(item => item.name);
+        const values = data.map(item => item.amount);
+        const colors = data.map(item => item.color);
+        
+        window.categoryChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Expenses',
+                    data: values,
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    pointBackgroundColor: colors
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    r: {
+                        angleLines: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        pointLabels: {
+                            color: '#999'
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% block title %}Categories - Finance Tracker{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Categories List -->
+        <div class="col-lg-8">
+            <div class="card dashboard-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2>Categories</h2>
+                </div>
+                <div class="card-body">
+                    {% if categories %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Icon</th>
+                                    <th>Name</th>
+                                    <th>Color</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for category in categories %}
+                                <tr>
+                                    <td>
+                                        <div class="category-icon" style="background-color: {{ category.color or '#6c757d' }}">
+                                            <i class="fas fa-{{ category.icon or 'tag' }}"></i>
+                                        </div>
+                                    </td>
+                                    <td>{{ category.name }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="color-preview" style="width: 24px; height: 24px; border-radius: 4px; background-color: {{ category.color or '#6c757d' }}; margin-right: 8px;"></div>
+                                            <span>{{ category.color or 'Default' }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('transactions.edit_category', id=category.id) }}" class="btn btn-sm btn-outline-primary me-1">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" 
+                                               data-bs-toggle="modal" data-bs-target="#deleteModal{{ category.id }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        
+                                        <!-- Delete Confirmation Modal -->
+                                        <div class="modal fade" id="deleteModal{{ category.id }}" tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title text-dark">Confirm Deletion</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body text-dark">
+                                                        Are you sure you want to delete the category "{{ category.name }}"?
+                                                        <p class="text-danger mt-2">
+                                                            <i class="fas fa-exclamation-triangle"></i> 
+                                                            This will only work if no transactions are using this category.
+                                                        </p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <form action="{{ url_for('transactions.delete_category', id=category.id) }}" method="POST">
+                                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-tags fa-3x mb-3 text-muted"></i>
+                        <h3>No categories found</h3>
+                        <p class="text-muted">Create categories to organize your transactions</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Add Category Form -->
+        <div class="col-lg-4">
+            <div class="card dashboard-card">
+                <div class="card-header">
+                    <h2>Add Category</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.name.label(class="form-label") }}
+                            {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else ""), placeholder="Category name") }}
+                            {% if form.name.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.name.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.icon.label(class="form-label") }}
+                            {{ form.icon(class="form-control" + (" is-invalid" if form.icon.errors else ""), placeholder="Icon name (e.g. 'utensils')") }}
+                            {% if form.icon.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.icon.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <div class="form-text">
+                                <a href="https://fontawesome.com/icons" target="_blank">Browse icons</a> 
+                                (use icon name without 'fa-' prefix)
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.color.label(class="form-label") }}
+                            <div class="input-group">
+                                {{ form.color(class="form-control" + (" is-invalid" if form.color.errors else ""), type="color", value="#6f42c1") }}
+                                {{ form.color(class="form-control" + (" is-invalid" if form.color.errors else ""), placeholder="#RRGGBB") }}
+                            </div>
+                            {% if form.color.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.color.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Update text input when color picker changes
+    const colorPicker = document.querySelector('input[type="color"]');
+    const colorText = document.querySelectorAll('input[name="color"]')[1];
+    
+    colorPicker.addEventListener('input', function() {
+        colorText.value = this.value;
+    });
+    
+    colorText.addEventListener('input', function() {
+        colorPicker.value = this.value;
+    });
+});
+</script>
+{% endblock %}
