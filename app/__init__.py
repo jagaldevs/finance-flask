@@ -15,20 +15,19 @@ login_manager = LoginManager()
 migrate = Migrate()
 csrf = CSRFProtect()
 
-# Inside create_app function where you set up the app configuration
-database_url = os.environ.get('DATABASE_URL')
-if database_url and database_url.startswith('postgres://'):
-    database_url = database_url.replace('postgres://', 'postgresql://', 1)
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///finance_tracker.db'
-
 def create_app():
     """Initialize the core application."""
     app = Flask(__name__, instance_relative_config=False)
     
+    # Handle PostgreSQL URL format for Heroku
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url and database_url.startswith('postgres://'):
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+    
     # App Configuration
     app.config.from_mapping(
         SECRET_KEY=os.environ.get('SECRET_KEY', 'dev'),
-        SQLALCHEMY_DATABASE_URI=os.environ.get('DATABASE_URL', 'sqlite:///finance_tracker.db'),
+        SQLALCHEMY_DATABASE_URI=database_url or 'sqlite:///finance_tracker.db',
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
     )
     
@@ -52,7 +51,7 @@ def create_app():
         
         # Create database tables if they don't exist
         db.create_all()
-
+        
         @app.route('/')
         def index():
             return redirect(url_for('dashboard.dashboard'))
