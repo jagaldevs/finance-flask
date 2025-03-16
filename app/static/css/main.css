@@ -313,3 +313,37 @@
       height: 250px;
     }
   }
+  /* Mobile-specific adjustments */
+@media (max-width: 768px) {
+  /* Make tables responsive */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Adjust card padding */
+  .dashboard-card {
+    padding: 0.75rem;
+  }
+  
+  /* Adjust font sizes */
+  h1, h2 {
+    font-size: 1.5rem;
+  }
+  
+  /* Make buttons easier to tap */
+  .btn {
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Stack form elements */
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  /* Adjust charts for smaller screens */
+  .chart-container {
+    height: 250px;
+  }
+}
