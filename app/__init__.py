@@ -49,8 +49,7 @@ def create_app():
         app.register_blueprint(transaction_routes.transaction_bp)
         app.register_blueprint(dashboard_routes.dashboard_bp)
         
-        # Create database tables if they don't exist
-        db.create_all()
+        
         
         @app.route('/')
         def index():
