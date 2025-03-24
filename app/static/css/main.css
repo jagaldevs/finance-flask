@@ -528,3 +528,77 @@ body {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
 }
+/* Mobile Friendly Improvements */
+@media (max-width: 768px) {
+  /* Adjust card padding for mobile */
+  .dashboard-card {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Make headers smaller on mobile */
+  .dashboard-header h1 {
+    font-size: 1.25rem;
+  }
+  
+  .card-header h2 {
+    font-size: 1.1rem;
+  }
+  
+  /* Adjust date range selector for mobile */
+  .date-range-selector {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  
+  .date-range-selector .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+  }
+  
+  /* Adjust savings numbers for mobile */
+  .net-savings h3, .savings-rate h3 {
+    font-size: 1.5rem;
+  }
+  
+  /* Improve chart visibility on small screens */
+  .chart-container {
+    height: 250px !important;
+  }
+  
+  /* Stack expenses and income display on mobile */
+  .totals-container {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  /* Improve table scrolling on mobile */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Make form controls larger for touch */
+  .form-control, .form-select, .btn {
+    min-height: 44px; /* Minimum touch target size */
+  }
+  
+  /* Improve modal display on mobile */
+  .modal-dialog {
+    margin: 0.5rem;
+  }
+  
+  /* Optimize forms for mobile */
+  .row > [class*="col-"] {
+    margin-bottom: 1rem;
+  }
+  
+  .modal-footer {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .modal-footer .btn {
+    width: 100%;
+  }
+}
