@@ -19,15 +19,21 @@ def dashboard():
 def dashboard_data():
     """API endpoint for dashboard data."""
     # Get time range from request
-    time_range = request.args.get('range', 'week')
+    time_range = request.args.get('range', 'month')
     
     # Calculate date ranges
     today = datetime.utcnow().date()
     
-    if time_range == 'week':
-        start_date = today - timedelta(days=7)
-    elif time_range == 'month':
+    if time_range == 'month':
         start_date = today.replace(day=1)
+    elif time_range == '3months':
+        # Go back 3 months
+        three_months_ago = today.month - 3
+        year_offset = 0
+        if three_months_ago <= 0:
+            three_months_ago += 12
+            year_offset = -1
+        start_date = today.replace(year=today.year + year_offset, month=three_months_ago, day=1)
     elif time_range == 'custom':
         # Parse custom date range if provided
         try:
@@ -39,6 +45,9 @@ def dashboard_data():
     else:
         # Default to last 30 days
         start_date = today - timedelta(days=30)
+    
+    if time_range != 'custom':
+        end_date = today
     
     if time_range != 'custom':
         end_date = today
@@ -138,17 +147,32 @@ def chart_data():
     # Calculate date ranges
     today = datetime.utcnow().date()
     
-    if time_range == 'week':
-        start_date = today - timedelta(days=7)
-    elif time_range == 'month':
+    if time_range == 'month':
         start_date = today.replace(day=1)
+    elif time_range == '3months':
+        # Go back 3 months
+        three_months_ago = today.month - 3
+        year_offset = 0
+        if three_months_ago <= 0:
+            three_months_ago += 12
+            year_offset = -1
+        start_date = today.replace(year=today.year + year_offset, month=three_months_ago, day=1)
+    elif time_range == 'custom':
+        # Parse custom date range if provided
+        try:
+            start_date = datetime.strptime(request.args.get('start', ''), '%Y-%m-%d').date()
+            end_date = datetime.strptime(request.args.get('end', ''), '%Y-%m-%d').date()
+        except ValueError:
+            start_date = today - timedelta(days=30)
+            end_date = today
     elif time_range == 'year':
         start_date = today.replace(month=1, day=1)
     else:
         # Default to last 30 days
         start_date = today - timedelta(days=30)
     
-    end_date = today
+    if time_range != 'custom':
+        end_date = today
     
     data = {}
     
