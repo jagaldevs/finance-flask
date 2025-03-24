@@ -384,3 +384,74 @@
     border-color: var(--primary);
     box-shadow: 0 0 0 0.25rem rgba(233, 30, 99, 0.25);
 }
+
+/* Ensure text is visible on all pages */
+body {
+    background-color: var(--dark-bg);
+    color: var(--text-light);
+}
+
+/* Specific styling for transaction page */
+.transaction-item, 
+.transaction-detail, 
+.table,
+.form-control,
+.form-label,
+.form-select,
+.card-header h2,
+.card-body {
+    color: var(--text-light) !important;
+}
+
+/* Form controls */
+.form-control, 
+.form-select {
+    background-color: var(--card-bg);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.form-control:focus, 
+.form-select:focus {
+    background-color: var(--card-bg);
+    color: var(--text-light);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.25rem rgba(233, 30, 99, 0.25);
+}
+
+/* Tables */
+.table {
+    color: var(--text-light);
+}
+
+.table thead th {
+    background-color: var(--card-bg);
+    color: var(--text-light);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.table tbody td {
+    color: var(--text-light);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Ensure filters and buttons are readable */
+.filters .form-control, 
+.filters .form-select,
+.filters .form-label {
+    color: var(--text-light);
+}
+
+/* Fix modal colors */
+.modal-content {
+    background-color: var(--card-bg);
+    color: var(--text-light);
+}
+
+.modal-header, 
+.modal-footer {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
