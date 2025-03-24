@@ -1,5 +1,3 @@
-
-
 {% extends 'base.html' %}
 
 {% block title %}JagalDevs Finance Tracker{% endblock %}
@@ -87,136 +85,109 @@
 {% endblock %}
 
 {% block scripts %}
-<!-- Keep the existing script block unchanged -->
-{% endblock %}
-
-{% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Load dashboard data
-    loadDashboardData('week');
+    loadDashboardData('month');
     
     // Date range buttons
-document.getElementById('last-month').addEventListener('click', function() {
-    setActiveButton(this);
-    loadDashboardData('month');
-});
-
-document.getElementById('last-3-months').addEventListener('click', function() {
-    setActiveButton(this);
-    loadDashboardData('3months');
-});
-
-document.getElementById('custom-range').addEventListener('click', function() {
-    setActiveButton(this);
-    showDatePickerModal();
-});
-
-function showDatePickerModal() {
-    // Create modal if it doesn't exist
-    if (!document.getElementById('date-picker-modal')) {
-        const modal = document.createElement('div');
-        modal.id = 'date-picker-modal';
-        modal.className = 'modal fade';
-        modal.innerHTML = `
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Select Date Range</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="start-date" class="form-label">Start Date</label>
-                            <input type="date" class="form-control" id="start-date">
+    document.getElementById('last-month').addEventListener('click', function() {
+        setActiveButton(this);
+        loadDashboardData('month');
+    });
+    
+    document.getElementById('last-3-months').addEventListener('click', function() {
+        setActiveButton(this);
+        loadDashboardData('3months');
+    });
+    
+    document.getElementById('custom-range').addEventListener('click', function() {
+        setActiveButton(this);
+        showDatePickerModal();
+    });
+    
+    function showDatePickerModal() {
+        // Create modal if it doesn't exist
+        if (!document.getElementById('date-picker-modal')) {
+            const modal = document.createElement('div');
+            modal.id = 'date-picker-modal';
+            modal.className = 'modal fade';
+            modal.innerHTML = `
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Select Date Range</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
-                        <div class="mb-3">
-                            <label for="end-date" class="form-label">End Date</label>
-                            <input type="date" class="form-control" id="end-date">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="start-date" class="form-label">Start Date</label>
+                                <input type="date" class="form-control" id="start-date">
+                            </div>
+                            <div class="mb-3">
+                                <label for="end-date" class="form-label">End Date</label>
+                                <input type="date" class="form-control" id="end-date">
+                            </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="apply-date-range">Apply</button>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="apply-date-range">Apply</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        
-        // Set default dates (last 30 days)
-        const today = new Date();
-        const thirtyDaysAgo = new Date(today);
-        thirtyDaysAgo.setDate(today.getDate() - 30);
-        
-        document.getElementById('end-date').valueAsDate = today;
-        document.getElementById('start-date').valueAsDate = thirtyDaysAgo;
-        
-        // Add event listener for the Apply button
-        document.getElementById('apply-date-range').addEventListener('click', function() {
-            const startDate = document.getElementById('start-date').value;
-            const endDate = document.getElementById('end-date').value;
+            `;
+            document.body.appendChild(modal);
             
-            if (startDate && endDate) {
-                loadDashboardData('custom', { start: startDate, end: endDate });
-                const modal = bootstrap.Modal.getInstance(document.getElementById('date-picker-modal'));
-                modal.hide();
-            }
+            // Set default dates (last 30 days)
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today);
+            thirtyDaysAgo.setDate(today.getDate() - 30);
+            
+            document.getElementById('end-date').valueAsDate = today;
+            document.getElementById('start-date').valueAsDate = thirtyDaysAgo;
+            
+            // Add event listener for the Apply button
+            document.getElementById('apply-date-range').addEventListener('click', function() {
+                const startDate = document.getElementById('start-date').value;
+                const endDate = document.getElementById('end-date').value;
+                
+                if (startDate && endDate) {
+                    loadDashboardData('custom', { start: startDate, end: endDate });
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('date-picker-modal'));
+                    modal.hide();
+                }
+            });
+        }
+        
+        // Show the modal
+        const datePickerModal = new bootstrap.Modal(document.getElementById('date-picker-modal'));
+        datePickerModal.show();
+    }
+    
+    function setActiveButton(button) {
+        document.querySelectorAll('.date-range-selector .btn').forEach(btn => {
+            btn.classList.remove('active');
         });
+        button.classList.add('active');
     }
     
-    // Show the modal
-    const datePickerModal = new bootstrap.Modal(document.getElementById('date-picker-modal'));
-    datePickerModal.show();
-}
-
-function loadDashboardData(range, customDates = null) {
-    let url = `/dashboard/data?range=${range}`;
-    
-    // Add custom date parameters if provided
-    if (customDates) {
-        url += `&start=${customDates.start}&end=${customDates.end}`;
+    function loadDashboardData(range, customDates = null) {
+        let url = `/dashboard/data?range=${range}`;
+        
+        // Add custom date parameters if provided
+        if (customDates) {
+            url += `&start=${customDates.start}&end=${customDates.end}`;
+        }
+        
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                updateDashboardUI(data);
+                loadChartData(range, customDates);
+            })
+            .catch(error => console.error('Error loading dashboard data:', error));
     }
-    
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            updateDashboardUI(data);
-            loadChartData(range, customDates);
-        })
-        .catch(error => console.error('Error loading dashboard data:', error));
-}
-
-function loadChartData(range, customDates = null) {
-    // Create URL for chart data
-    let url = `/dashboard/chart-data?range=${range}&type=expenses_income`;
-    if (customDates) {
-        url += `&start=${customDates.start}&end=${customDates.end}`;
-    }
-    
-    // Load expenses and income chart data
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            createExpensesIncomeChart(data);
-        })
-        .catch(error => console.error('Error loading chart data:', error));
-    
-    // Create URL for category breakdown
-    let categoryUrl = `/dashboard/chart-data?range=${range}&type=category_breakdown`;
-    if (customDates) {
-        categoryUrl += `&start=${customDates.start}&end=${customDates.end}`;
-    }
-    
-    // Load category breakdown chart data
-    fetch(categoryUrl)
-        .then(response => response.json())
-        .then(data => {
-            createCategoryChart(data);
-        })
-        .catch(error => console.error('Error loading category data:', error));
-}
     
     function updateDashboardUI(data) {
         // Update expenses
@@ -224,43 +195,31 @@ function loadChartData(range, customDates = null) {
         document.getElementById('week-amount').textContent = data.total_expenses;
         document.getElementById('total-expenses').textContent = data.total_expenses;
         document.getElementById('total-income').textContent = data.total_income;
-        
-        // Update transaction frequency
-        document.getElementById('daily-frequency').textContent = data.transaction_frequency.daily;
-        document.getElementById('weekly-frequency').textContent = data.transaction_frequency.weekly;
-        
-        // Update categories list
-        const categoriesContainer = document.getElementById('categories-list');
-        categoriesContainer.innerHTML = '';
-        
-        data.category_expenses.forEach(category => {
-            const categoryItem = document.createElement('div');
-            categoryItem.className = 'category-item';
-            categoryItem.innerHTML = `
-                <div class="category-info">
-                    <div class="category-icon" style="background-color: ${category.color}">
-                        <i class="fas fa-${category.icon || 'tag'}"></i>
-                    </div>
-                    <div class="category-name">${category.name}</div>
-                </div>
-                <div class="category-amount">$${category.amount}</div>
-                <div class="category-arrow"><i class="fas fa-chevron-right"></i></div>
-            `;
-            categoriesContainer.appendChild(categoryItem);
-        });
     }
     
-    function loadChartData(range) {
+    function loadChartData(range, customDates = null) {
+        // Create URL for chart data
+        let url = `/dashboard/chart-data?range=${range}&type=expenses_income`;
+        if (customDates) {
+            url += `&start=${customDates.start}&end=${customDates.end}`;
+        }
+        
         // Load expenses and income chart data
-        fetch(`/dashboard/chart-data?range=${range}&type=expenses_income`)
+        fetch(url)
             .then(response => response.json())
             .then(data => {
                 createExpensesIncomeChart(data);
             })
             .catch(error => console.error('Error loading chart data:', error));
         
+        // Create URL for category breakdown
+        let categoryUrl = `/dashboard/chart-data?range=${range}&type=category_breakdown`;
+        if (customDates) {
+            categoryUrl += `&start=${customDates.start}&end=${customDates.end}`;
+        }
+        
         // Load category breakdown chart data
-        fetch(`/dashboard/chart-data?range=${range}&type=category_breakdown`)
+        fetch(categoryUrl)
             .then(response => response.json())
             .then(data => {
                 createCategoryChart(data);
@@ -269,7 +228,10 @@ function loadChartData(range, customDates = null) {
     }
     
     function createExpensesIncomeChart(data) {
-        const ctx = document.getElementById('income-expense-chart').getContext('2d');
+        const ctx = document.getElementById('income-expense-chart');
+        if (!ctx) return; // Check if element exists
+        
+        const context2D = ctx.getContext('2d');
         
         // Destroy existing chart if it exists
         if (window.incomeExpenseChart) {
@@ -281,7 +243,7 @@ function loadChartData(range, customDates = null) {
         const expensesData = data.expenses.map(item => item.amount);
         const incomeData = data.income.map(item => item.amount);
         
-        window.incomeExpenseChart = new Chart(ctx, {
+        window.incomeExpenseChart = new Chart(context2D, {
             type: 'line',
             data: {
                 labels: labels,
@@ -336,7 +298,10 @@ function loadChartData(range, customDates = null) {
     }
     
     function createCategoryChart(data) {
-        const ctx = document.getElementById('expenses-chart').getContext('2d');
+        const ctx = document.getElementById('expenses-chart');
+        if (!ctx) return; // Check if element exists
+        
+        const context2D = ctx.getContext('2d');
         
         // Destroy existing chart if it exists
         if (window.categoryChart) {
@@ -348,7 +313,7 @@ function loadChartData(range, customDates = null) {
         const values = data.map(item => item.amount);
         const colors = data.map(item => item.color);
         
-        window.categoryChart = new Chart(ctx, {
+        window.categoryChart = new Chart(context2D, {
             type: 'radar',
             data: {
                 labels: labels,
