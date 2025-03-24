@@ -16,21 +16,21 @@
     
     <div class="dashboard-content">
         <div class="row">
-            <!-- Total Expenses -->
+            <!-- Savings Summary -->
             <div class="col-lg-6 mb-4">
                 <div class="card dashboard-card">
                     <div class="card-header">
-                        <h2>Total expenses</h2>
+                        <h2>Savings Summary</h2>
                     </div>
                     <div class="card-body">
-                        <div class="expenses-container">
-                            <div class="today-expense">
-                                <h3>$<span id="today-amount">0</span></h3>
-                                <div class="label">TODAY <span id="today-percent" class="percent">0%</span></div>
+                        <div class="savings-container">
+                            <div class="net-savings">
+                                <h3>$<span id="net-savings">0</span></h3>
+                                <div class="label">NET SAVINGS</div>
                             </div>
-                            <div class="week-expense">
-                                <h3>$<span id="week-amount">0</span></h3>
-                                <div class="label">WEEK <span id="week-percent" class="percent">0%</span></div>
+                            <div class="savings-rate">
+                                <h3><span id="savings-rate">0</span>%</h3>
+                                <div class="label">SAVINGS RATE</div>
                             </div>
                         </div>
                     </div>
@@ -190,9 +190,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function updateDashboardUI(data) {
-        // Update expenses
-        document.getElementById('today-amount').textContent = data.today_expenses;
-        document.getElementById('week-amount').textContent = data.total_expenses;
+        // Calculate savings metrics
+        const totalIncome = data.total_income;
+        const totalExpenses = data.total_expenses;
+        const netSavings = totalIncome - totalExpenses;
+        const savingsRate = totalIncome > 0 ? Math.round((netSavings / totalIncome) * 100) : 0;
+        
+        // Update savings display
+        document.getElementById('net-savings').textContent = netSavings.toFixed(2);
+        document.getElementById('savings-rate').textContent = savingsRate;
+        
+        // Add conditional coloring for negative savings
+        const netSavingsElement = document.getElementById('net-savings').parentElement;
+        if (netSavings < 0) {
+            netSavingsElement.classList.add('negative');
+        } else {
+            netSavingsElement.classList.remove('negative');
+        }
+        
+        // Update other elements
         document.getElementById('total-expenses').textContent = data.total_expenses;
         document.getElementById('total-income').textContent = data.total_income;
     }
