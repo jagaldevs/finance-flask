@@ -406,6 +406,23 @@ document.addEventListener('DOMContentLoaded', function() {
             };
         }
         
+        // Add chart-specific options for pie and doughnut charts
+        if (chartType === 'pie' || chartType === 'doughnut') {
+            // Check if we're on mobile
+            const isMobile = window.innerWidth < 768;
+            
+            chartConfig.options.plugins.legend = {
+                display: true,
+                position: isMobile ? 'bottom' : 'right',
+                labels: {
+                    boxWidth: isMobile ? 12 : 20,
+                    font: {
+                        size: isMobile ? 10 : 12
+                    }
+                }
+            };
+        }
+        
         // Create the chart
         window.categoryChart = new Chart(context2D, chartConfig);
     }
