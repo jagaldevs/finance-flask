@@ -159,6 +159,10 @@ def chart_data():
         
         # For month view, group by day
         if time_range in ['week', 'month']:
+            # Initialize cumulative totals
+            cumulative_expense = 0
+            cumulative_income = 0
+            
             for i in range((end_date - start_date).days + 1):
                 current_date = start_date + timedelta(days=i)
                 next_date = current_date + timedelta(days=1)
@@ -179,18 +183,26 @@ def chart_data():
                     Transaction.date < datetime.combine(next_date, datetime.min.time())
                 ).with_entities(func.sum(Transaction.amount)).scalar() or 0
                 
+                # Add to cumulative totals
+                cumulative_expense += daily_expense
+                cumulative_income += daily_income
+                
                 expenses_data.append({
                     'date': current_date.strftime('%d.%m'),
-                    'amount': round(daily_expense, 2)
+                    'amount': round(cumulative_expense, 2)
                 })
                 
                 income_data.append({
                     'date': current_date.strftime('%d.%m'),
-                    'amount': round(daily_income, 2)
+                    'amount': round(cumulative_income, 2)
                 })
                 
         # For year view, group by month
         elif time_range == 'year':
+            # Initialize cumulative totals
+            cumulative_expense = 0
+            cumulative_income = 0
+            
             for month in range(1, 13):
                 start_of_month = datetime(today.year, month, 1)
                 
@@ -215,14 +227,18 @@ def chart_data():
                     Transaction.date <= end_of_month
                 ).with_entities(func.sum(Transaction.amount)).scalar() or 0
                 
+                # Add to cumulative totals
+                cumulative_expense += monthly_expense
+                cumulative_income += monthly_income
+                
                 expenses_data.append({
                     'date': start_of_month.strftime('%b'),
-                    'amount': round(monthly_expense, 2)
+                    'amount': round(cumulative_expense, 2)
                 })
                 
                 income_data.append({
                     'date': start_of_month.strftime('%b'),
-                    'amount': round(monthly_income, 2)
+                    'amount': round(cumulative_income, 2)
                 })
         
         data = {
