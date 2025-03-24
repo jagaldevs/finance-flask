@@ -347,3 +347,29 @@
     height: 250px;
   }
 }
+/* Add to your main.css */
+.savings-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+}
+
+.net-savings, .savings-rate {
+    text-align: center;
+    flex: 1;
+}
+
+.net-savings h3, .savings-rate h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.net-savings h3 {
+    color: var(--green); /* Use your positive color variable */
+}
+
+/* Add conditional coloring in JavaScript for negative savings */
+.negative {
+    color: var(--red) !important; /* Use your negative color variable */
+}
