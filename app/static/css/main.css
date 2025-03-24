@@ -516,3 +516,15 @@ body {
     margin: 0.5rem;
   }
 }
+/* Better touch targets */
+.btn, 
+.nav-link,
+.form-control,
+.form-select {
+  padding: 0.5rem 0.75rem;
+}
+
+.dropdown-item {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
