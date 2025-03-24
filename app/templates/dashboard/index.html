@@ -66,10 +66,20 @@
                 <div class="card dashboard-card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h2>Category Breakdown</h2>
-                        <div class="add-category">
-                            <a href="{{ url_for('transactions.categories') }}" class="btn btn-sm btn-primary">
-                                <i class="fas fa-plus"></i> Manage Categories
-                            </a>
+                        <div class="d-flex align-items-center">
+                            <div class="chart-type-selector me-3">
+                                <select id="category-chart-type" class="form-select form-select-sm">
+                                    <option value="radar">Radar Chart</option>
+                                    <option value="pie">Pie Chart</option>
+                                    <option value="bar">Bar Chart</option>
+                                    <option value="doughnut">Doughnut Chart</option>
+                                </select>
+                            </div>
+                            <div class="add-category">
+                                <a href="{{ url_for('transactions.categories') }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-plus"></i> Manage Categories
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -105,6 +115,21 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('custom-range').addEventListener('click', function() {
         setActiveButton(this);
         showDatePickerModal();
+    });
+    
+    // Chart type selector
+    document.getElementById('category-chart-type').addEventListener('change', function() {
+        // Reload the chart data with the current date range
+        const activeButton = document.querySelector('.date-range-selector .btn.active');
+        let range = 'month';
+        
+        if (activeButton) {
+            if (activeButton.id === 'last-month') range = 'month';
+            else if (activeButton.id === 'last-3-months') range = '3months';
+            else if (activeButton.id === 'custom-range') range = 'custom';
+        }
+        
+        loadChartData(range);
     });
     
     function showDatePickerModal() {
@@ -327,18 +352,22 @@ document.addEventListener('DOMContentLoaded', function() {
         // Prepare chart data
         const labels = data.map(item => item.name);
         const values = data.map(item => item.amount);
-        const colors = data.map(item => item.color);
+        const colors = data.map(item => item.color || getRandomColor());
         
-        window.categoryChart = new Chart(context2D, {
-            type: 'radar',
+        // Get selected chart type
+        const chartType = document.getElementById('category-chart-type').value;
+        
+        // Chart configuration based on type
+        let chartConfig = {
+            type: chartType,
             data: {
                 labels: labels,
                 datasets: [{
                     label: 'Expenses',
                     data: values,
-                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    pointBackgroundColor: colors
+                    backgroundColor: chartType === 'radar' ? 'rgba(255, 99, 132, 0.5)' : colors,
+                    borderColor: chartType === 'radar' ? 'rgba(255, 99, 132, 1)' : colors.map(color => color),
+                    borderWidth: 1
                 }]
             },
             options: {
@@ -346,24 +375,49 @@ document.addEventListener('DOMContentLoaded', function() {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    r: {
-                        angleLines: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        },
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        },
-                        pointLabels: {
-                            color: '#999'
-                        }
+                        display: chartType !== 'radar' && chartType !== 'bar',
+                        position: 'right'
                     }
                 }
             }
-        });
+        };
+        
+        // Add chart-specific options
+        if (chartType === 'radar') {
+            chartConfig.data.datasets[0].pointBackgroundColor = colors;
+            chartConfig.options.scales = {
+                r: {
+                    angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    pointLabels: { color: '#999' }
+                }
+            };
+        } else if (chartType === 'bar') {
+            chartConfig.options.scales = {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#999' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#999' }
+                }
+            };
+        }
+        
+        // Create the chart
+        window.categoryChart = new Chart(context2D, chartConfig);
+    }
+    
+    // Helper function to generate random colors if needed
+    function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
     }
 });
 </script>
