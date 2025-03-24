@@ -366,10 +366,21 @@
 }
 
 .net-savings h3 {
-    color: var(--green); /* Use your positive color variable */
+    color: #00e396; /* Green color for positive savings */
 }
 
-/* Add conditional coloring in JavaScript for negative savings */
 .negative {
-    color: var(--red) !important; /* Use your negative color variable */
+    color: #ff4560 !important; /* Red color for negative savings */
+}
+
+/* Styles for chart type selector */
+.chart-type-selector .form-select {
+    background-color: var(--card-bg);
+    color: var(--text-light);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.chart-type-selector .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.25rem rgba(233, 30, 99, 0.25);
 }
