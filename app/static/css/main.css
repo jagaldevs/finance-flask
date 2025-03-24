@@ -602,3 +602,36 @@ body {
     width: 100%;
   }
 }
+/* Add this to your main.css file */
+@media (max-width: 768px) {
+  /* Hide the full title and show a shorter version for mobile */
+  .navbar-brand .full-title {
+    display: none;
+  }
+  
+  .navbar-brand .mobile-title {
+    display: inline;
+  }
+  
+  /* Constrain the width to prevent horizontal scrolling */
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  /* Make sure container doesn't overflow */
+  .container-fluid {
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 100%;
+  }
+}
+
+/* Default title display (show full title, hide mobile title) */
+.navbar-brand .mobile-title {
+  display: none;
+}
+
+.navbar-brand .full-title {
+  display: inline;
+}
